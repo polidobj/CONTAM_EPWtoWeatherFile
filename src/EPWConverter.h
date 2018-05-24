@@ -1,5 +1,6 @@
 #pragma once
+#include "config.h"
 #include <istream>
 #include <ostream>
 
-int convertEPW(std::string options, std::istream &istream, std::ostream &ostream);
+int convertEPW(configStruct config, std::istream &istream, std::ostream &ostream);

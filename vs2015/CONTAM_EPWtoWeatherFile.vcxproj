@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\xsc-bin\$(Configuration)\</OutDir>
-    <IntDir>..\xsc-bin\$(Configuration)\int</IntDir>
+    <IntDir>..\xsc-bin\$(Configuration)\int\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -144,11 +144,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\cJSON\cJSON.h" />
+    <ClInclude Include="..\src\config.h" />
     <ClInclude Include="..\src\EPWConverter.h" />
+    <ClInclude Include="..\src\utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\cJSON\cJSON.c" />
+    <ClCompile Include="..\src\config.cpp" />
     <ClCompile Include="..\src\EPWConverter.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

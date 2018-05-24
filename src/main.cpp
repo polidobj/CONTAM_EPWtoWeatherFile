@@ -1,4 +1,6 @@
 #include "EPWConverter.h"
+#include "../lib/cJSON/cJSON.h"
+#include "config.h"
 
 #include <iostream>
 #include <string>
@@ -14,27 +16,28 @@ int main(int argc, char *argv[])
   // make sure that there is at least one param
   if (argc < 2)
   {
-    std::cout << "No command-line parameter given for epw file." << std::endl;
+    std::cerr << "No command-line parameter given for epw file." << std::endl;
     return 1;
   }
   // make sure that there is at least two params
   if (argc < 3)
   {
-    std::cout << "No command-line parameter given for wth file." << std::endl;
+    std::cerr << "No command-line parameter given for wth file." << std::endl;
     return 1;
   }
 
   // assume that the first param is the epw file path
   std::string epwPath = argv[1];
+  // assume that the second param is the wth file path
   std::string wthPath = argv[2];
   bool cnfFilePresent = false;
   std::string cnfPath = "";
-  std::string cnfFileContents;
+  configStruct config;
 
   // check for a third param
   if (argc > 3)
   {
-    // assume that the second param is the config file path
+    // assume that the third param is the config file path
     cnfPath = argv[3];
     cnfFilePresent = true;
   }
@@ -45,29 +48,51 @@ int main(int argc, char *argv[])
   //check that the file was opened
   if (epwStream.fail())
   {
-    std::cout << "Failed to open the epw file: " << epwPath << std::endl;
+    std::cerr << "Failed to open the epw file: " << epwPath << std::endl;
     return 1;
   }
 
   if (cnfFilePresent)
   {
+    std::string cnfFileContents;
+    cJSON *cnfJSON;
     std::ifstream cnfStream;
     cnfStream.open(cnfPath);
     //check that the file was opened
     if (cnfStream.fail())
     {
-      std::cout << "Failed to open the config file: " << cnfPath << std::endl;
+      std::cerr << "Failed to open the config file: " << cnfPath << std::endl;
       return 1;
     }
     // read the whole file
-    //std::string s(std::istreambuf_iterator<char>(cnfStream), {});
-    //cnfFileContents = s;
     cnfFileContents = std::string(std::istreambuf_iterator<char>(cnfStream), {});
     cnfStream.close();
+    cnfJSON = cJSON_Parse(cnfFileContents.c_str());
+    if (cnfJSON == NULL)
+    {
+      const char *error_ptr = cJSON_GetErrorPtr();
+      if (error_ptr != NULL)
+      {
+        std::cerr << "Error before: " << error_ptr << std::endl;
+        return 1;
+      }
+    }
+
+    config = getConfigData(cnfJSON);
+    cJSON_Delete(cnfJSON);
+    if (!config.validConfig)
+    {
+      std::cerr << config.errMsg << std::endl;
+      return 1;
+    }
   }
   else
   {
-    //TODO: create a default config
+    //create a default config
+    config.useDST = 0; // no DST
+    config.startDate = -1; // use EPW start date
+    config.endDate = -1; // use EPW end date
+    config.firstDOY = 1; // use Jan 01 = Sunday
   }
 
   std::ofstream wthStream;
@@ -75,11 +100,11 @@ int main(int argc, char *argv[])
   //check that the file was opened
   if (wthStream.fail())
   {
-    std::cout << "Failed to open the wth file: " << wthPath << std::endl;
+    std::cerr << "Failed to open the wth file: " << wthPath << std::endl;
     return 1;
   }
 
-  int retVal = convertEPW(cnfFileContents, epwStream, wthStream);
+  int retVal = convertEPW(config, epwStream, wthStream);
   epwStream.close();
   wthStream.close();
   if (retVal == 0)
