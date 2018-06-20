@@ -44,7 +44,7 @@ configStruct getConfigData(cJSON *cnfJSON)
 
   // empty description is ok
   config.descr = getStringFromJSON("description", cnfJSON);
-
+  
   config.useDST = getIntFromJSON("usedst", cnfJSON);
   if (config.useDST == std::numeric_limits<int>::max())
   {
@@ -53,36 +53,39 @@ configStruct getConfigData(cJSON *cnfJSON)
     return config;
   }
 
-  // get the start date DST in the config file
-  std::string cnfStartDateDSTString = getStringFromJSON("dststart", cnfJSON);
-  if (cnfStartDateDSTString.length() == 0)
+  if(config.useDST)
   {
-    config.errMsg = "dststart not found in the config file.";
-    config.validConfig = 0;
-    return config;
-  }
-  config.startDateDST = StringDateXToIntDateX(cnfStartDateDSTString);
-  if (config.startDateDST == -1)
-  {
-    config.errMsg = "Invalid dststart in the config file: " + cnfStartDateDSTString;
-    config.validConfig = 0;
-    return config;
-  }
+    // get the start date DST in the config file
+    std::string cnfStartDateDSTString = getStringFromJSON("dststart", cnfJSON);
+    if (cnfStartDateDSTString.length() == 0)
+    {
+      config.errMsg = "dststart not found in the config file.";
+      config.validConfig = 0;
+      return config;
+    }
+    config.startDateDST = StringDateXToIntDateX(cnfStartDateDSTString);
+    if (config.startDateDST == -1)
+    {
+      config.errMsg = "Invalid dststart in the config file: " + cnfStartDateDSTString;
+      config.validConfig = 0;
+      return config;
+    }
 
-  // get the end date DST in the config file
-  std::string cnfEndDateDSTString = getStringFromJSON("dstend", cnfJSON);
-  if (cnfEndDateDSTString.length() == 0)
-  {
-    config.errMsg = "dstend not found in the config file.";
-    config.validConfig = 0;
-    return config;
-  }
-  config.endDateDST = StringDateXToIntDateX(cnfEndDateDSTString);
-  if (config.endDateDST == -1)
-  {
-    config.errMsg = "Invalid dstend in the config file: " + cnfEndDateDSTString;
-    config.validConfig = 0;
-    return config;
+    // get the end date DST in the config file
+    std::string cnfEndDateDSTString = getStringFromJSON("dstend", cnfJSON);
+    if (cnfEndDateDSTString.length() == 0)
+    {
+      config.errMsg = "dstend not found in the config file.";
+      config.validConfig = 0;
+      return config;
+    }
+    config.endDateDST = StringDateXToIntDateX(cnfEndDateDSTString);
+    if (config.endDateDST == -1)
+    {
+      config.errMsg = "Invalid dstend in the config file: " + cnfEndDateDSTString;
+      config.validConfig = 0;
+      return config;
+    }
   }
 
   config.firstDOY = getIntFromJSON("firstdoy", cnfJSON);

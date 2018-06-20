@@ -6,6 +6,8 @@
 #include <string>
 #include <fstream>
 
+#ifndef EMSCRIPTEN
+
 // program to convert an epw file to a CONTAM weather file
 // the first argument is a path to a epw file to convert
 // second srgument is a path to a CONTAM weather file to create (*.wth)
@@ -113,3 +115,4 @@ int main(int argc, char *argv[])
     std::cout << "Weather file conversion failed." << std::endl;
   return retVal;
 }
+#endif

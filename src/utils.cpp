@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <sstream>
+#include <cmath>
 
 // split a comma delimited string into a vector of strings
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems)
