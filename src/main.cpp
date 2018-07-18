@@ -106,6 +106,13 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  // check that the start date is after the end date
+  if (config.endDate < config.startDate)
+  {
+    std::cerr << "The start date cannot be after the end date." << std::endl;
+    return 1;
+  }
+
   int retVal = convertEPW(config, epwStream, wthStream);
   epwStream.close();
   wthStream.close();
