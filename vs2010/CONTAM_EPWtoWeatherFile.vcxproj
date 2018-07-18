@@ -65,6 +65,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Emscripten|Emscripten'">
     <IntDir>..\xsc-bin\$(Configuration)\int\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <OutDir>..\xsc-bin\$(VisualStudioVersion)\$(ProjectName)\$(Configuration)\$(PlatformShortName)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <IntDir>..\xsc-bin\$(VisualStudioVersion)\$(ProjectName)\$(Configuration)\$(PlatformShortName)\int\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>
