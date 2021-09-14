@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <filesystem>
 
 #ifndef EMSCRIPTEN
 
@@ -15,34 +16,64 @@
 //the config file contains JSON with options for the conversion
 int main(int argc, char *argv[])
 {
+  std::string epwPath;
+  std::string wthPath;
+  std::string cnfPath;
+  configStruct config;
+
   // make sure that there is at least one param
   if (argc < 2)
   {
+    std::cerr << "This tool requires at least one parameter which is the epw file path." << std::endl;
+    return 1;
+  }
+  for (int i = 1; i < argc; ++i)
+  {
+    std::filesystem::path path = argv[i];
+    std::string ext = path.extension().generic_string();
+    // change the extension to lowercase
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+    if (ext == ".epw")
+    {
+      epwPath = argv[i];
+    }
+    else if (ext == ".cnf")
+    {
+      cnfPath = argv[i];
+    }
+    else if (ext == ".wth")
+    {
+      wthPath = argv[i];
+    }
+    else //assume it's a weather file
+    {
+      std::filesystem::path temp = ".wth";
+      path.replace_extension(temp);
+      wthPath = path.generic_string();
+    }
+  }
+
+  // check if an epw path was given
+  if (epwPath.empty())
+  {
+    // if not then can't proceed
     std::cerr << "No command-line parameter given for epw file." << std::endl;
     return 1;
   }
-  // make sure that there is at least two params
-  if (argc < 3)
+
+  // if no wth path given then use epw path
+  if(wthPath.empty())
   {
-    std::cerr << "No command-line parameter given for wth file." << std::endl;
-    return 1;
+    // convert the epw path to have a wth extension
+    std::filesystem::path p = epwPath;
+    std::filesystem::path temp = ".wth";
+    p.replace_extension(temp);
+    // use that path for the wth file
+    wthPath = p.generic_string();
   }
 
-  // assume that the first param is the epw file path
-  std::string epwPath = argv[1];
-  // assume that the second param is the wth file path
-  std::string wthPath = argv[2];
-  bool cnfFilePresent = false;
-  std::string cnfPath = "";
-  configStruct config;
-
-  // check for a third param
-  if (argc > 3)
-  {
-    // assume that the third param is the config file path
-    cnfPath = argv[3];
-    cnfFilePresent = true;
-  }
+  // bool to indicate if a config path was given
+  bool cnfFilePresent = !cnfPath.empty();
 
   //open streams
   std::ifstream epwStream;

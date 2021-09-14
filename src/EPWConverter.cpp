@@ -210,17 +210,22 @@ int convertEPW(configStruct config, std::istream &istream, std::ostream &ostream
     return -1;
   }
 
-  //ensure that the config start and end dates are found in the EPW file
-  if (!dateIsWithinRange(config.startDate, epwStartDate, epwEndDate))
+  //check if a config was given
+  if (config.startDate > -1 && config.endDate > -1)
   {
-    std::cerr << "The start date in config is not within the dates included in the EPW file." <<std::endl;
-    return -1;
+    //ensure that the config start and end dates are found in the EPW file
+    if (!dateIsWithinRange(config.startDate, epwStartDate, epwEndDate))
+    {
+      std::cerr << "The start date in config is not within the dates included in the EPW file." << std::endl;
+      return -1;
+    }
+    if (!dateIsWithinRange(config.endDate, epwStartDate, epwEndDate))
+    {
+      std::cerr << "The end date in config is not within the dates included in the EPW file." << std::endl;
+      return -1;
+    }
   }
-  if (!dateIsWithinRange(config.endDate, epwStartDate, epwEndDate))
-  {
-    std::cerr << "The end date in config is not within the dates included in the EPW file." << std::endl;
-    return -1;
-  }
+
 
   // if the config contains a description use that 
   // otherwise use the first line of the epw file
