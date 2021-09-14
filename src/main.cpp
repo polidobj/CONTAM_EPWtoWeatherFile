@@ -35,6 +35,17 @@ int main(int argc, char *argv[])
       printf("CONTAM_EPWtoWTH version 2.0");
       return 0;
     }
+    if (argi == "-h")
+    {
+      printf("CONTAM_EPWtoWTH <EPW_File_Path> [WTH_File_Path] [CONFIG_File_Path]\n\
+          \t<EPW_File_Path> is the path for the EPW file to convert.\n\
+          \t[WTH_File_Path] Optional path to CONTAM weather file.\n\
+          \t\t If this option is not provided, then the output file will have the same name as the EPW_File_Path with the 'WTH' extension.\n\
+          \t[CONFIG_File_Path] Optional path to configuration file.\n\
+          \t\tIf provided, then the filename must include either the 'JSON' or 'CNF' extension to reflect the format of the configuration file provided.\n\
+      ");
+      return 0;
+    }
     std::filesystem::path path = argv[i];
     std::string ext = path.extension().generic_string();
     // change the extension to lowercase
