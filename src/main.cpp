@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     {
       epwPath = argv[i];
     }
-    else if (ext == ".cnf")
+    else if (ext == ".cnf" || ext == ".json")
     {
       cnfPath = argv[i];
     }
