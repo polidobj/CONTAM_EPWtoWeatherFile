@@ -29,6 +29,12 @@ int main(int argc, char *argv[])
   }
   for (int i = 1; i < argc; ++i)
   {
+    std::string argi = argv[i];
+    if (argi == "--version" || argi == "-v")
+    {
+      printf("CONTAM_EPWtoWTH version 2.0");
+      return 0;
+    }
     std::filesystem::path path = argv[i];
     std::string ext = path.extension().generic_string();
     // change the extension to lowercase
