@@ -92,32 +92,131 @@ void processDataLine(std::vector<std::string> &lineItems, std::ostream &ostream,
     return;
   }
 
-  int hour = std::stoi(lineItems[3]);
-  int minute = std::stoi(lineItems[4]);
+  int hour;
+  try
+  {
+    hour = std::stoi(lineItems[3]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the hour. (" + lineItems[3] + ")";
+    exit(1);
+  }
+  int minute;
+  try
+  {
+    minute = std::stoi(lineItems[4]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the minute. (" + lineItems[4] + ")";
+    exit(1);
+  }
   //compute the number of seconds of the day
   int time = hour * 3600 + minute * 60;
 
-  float dryBuldTemperatureC = std::stof(lineItems[6]);
+  float dryBuldTemperatureC;
+  try
+  {
+    dryBuldTemperatureC = std::stof(lineItems[6]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the dry bulb temperature. (" + lineItems[6] + ")";
+    exit(1);
+  }
   float dryBulbTemperatureK = 273.15f + dryBuldTemperatureC;
-  float dewPointTemperatureC = std::stof(lineItems[7]);
+  float dewPointTemperatureC;
+  try
+  {
+    dewPointTemperatureC = std::stof(lineItems[7]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the dew point temperature. (" + lineItems[7] + ")";
+    exit(1);
+  }
   float dewPointTemperatureK = 273.15f + dewPointTemperatureC;
-  float barometricPressure = std::stof(lineItems[9]);
-  float windSpeed = std::stof(lineItems[21]);
-  float windDirection = std::stof(lineItems[20]);
+  float barometricPressure;
+  try
+  {
+    barometricPressure = std::stof(lineItems[9]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the barometric pressure. (" + lineItems[9] + ")";
+    exit(1);
+  }
+  float windSpeed;
+  try
+  {
+    windSpeed = std::stof(lineItems[21]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the wind speed. (" + lineItems[21] + ")";
+    exit(1);
+  }
+  float windDirection;
+  try
+  {
+    windDirection = std::stof(lineItems[20]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the wind direction. (" + lineItems[20] + ")";
+    exit(1);
+  }
   float humidityRaito = 1000.0f * psywdp(dewPointTemperatureK, barometricPressure);
 
-  float totalHorizontalSolarRadiation1 = std::stof(lineItems[13]);
+  float totalHorizontalSolarRadiation1;
+  try
+  {
+    totalHorizontalSolarRadiation1 = std::stof(lineItems[13]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the total horizontal solar radiation. (" + lineItems[13] + ")";
+    exit(1);
+  }
   float totalHorizontalSolarRadiation2 = 3.6f * totalHorizontalSolarRadiation1; /* [Wh/m^2] to [kJ/m^2] */
-  float directNormalSolarRadiation1 = std::stof(lineItems[14]);
+  float directNormalSolarRadiation1;
+  try
+  {
+    directNormalSolarRadiation1 = std::stof(lineItems[14]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the direction normal solar radiation. (" + lineItems[14] + ")";
+    exit(1);
+  }
   float directNormalSolarRadiation2 = 3.6f * directNormalSolarRadiation1; /* [Wh/m^2] to [kJ/m^2] */
   float tenthsCloudCover = 0.0;
-  float totalSkyCover = std::stof(lineItems[22]);
+  float totalSkyCover;
+  try
+  {
+    totalSkyCover = std::stof(lineItems[22]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the total sky cover.(" + lineItems[22] + ")";
+    exit(1);
+  }
   if (totalSkyCover != 99)
     tenthsCloudCover = 0.1f * totalSkyCover;
   float skyRadiantTemprerature = skyTf(dryBulbTemperatureK, dewPointTemperatureK, tenthsCloudCover);
 
   std::string WeatherCodes = lineItems[27];
-  int rainCode = std::stoi(WeatherCodes.substr(1, 1));
+  int rainCode;
+  try
+  {
+    rainCode = std::stoi(WeatherCodes.substr(1, 1));
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the weather codes. (" + WeatherCodes + ")";
+    exit(1);
+  }
   int rain;
   if (rainCode >= 1 && rainCode <= 8)
     rain = 1;
@@ -125,7 +224,16 @@ void processDataLine(std::vector<std::string> &lineItems, std::ostream &ostream,
     rain = 0;
 
   int snow;
-  int snowDepth = std::stoi(lineItems[30]);
+  int snowDepth;
+  try
+  {
+    snowDepth = std::stoi(lineItems[30]);
+  }
+  catch (...)
+  {
+    std::cerr << "Failed to parse the snow depth. (" + lineItems[30] + ")";
+    exit(1);
+  }
   if (snowDepth > 1)
     snow = 1;
   else
